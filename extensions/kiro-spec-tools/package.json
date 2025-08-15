@@ -1,0 +1,25 @@
+{
+  "name": "kiro-spec-tools",
+  "displayName": "Kiro Spec Tools",
+  "description": "Commands to validate Kiro specs (requirements/design/tasks) from the Command Palette.",
+  "publisher": "local",
+  "version": "0.0.1",
+  "engines": { "vscode": "^1.80.0" },
+  "categories": ["Other"],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "kiro.validateSpec",
+        "title": "Kiro: Validate Spec",
+        "category": "Kiro"
+      },
+      {
+        "command": "kiro.validateLatestSpec",
+        "title": "Kiro: Validate Latest Spec",
+        "category": "Kiro"
+      }
+    ]
+  }
+}

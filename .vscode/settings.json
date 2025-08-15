@@ -1,0 +1,4 @@
+{
+  // Ensure Copilot Chat uses repo instruction files (.github/**)
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "vscode://schemas/launch",
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Kiro Spec Tools",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/extensions/kiro-spec-tools"
+      ]
+    }
+  ]
+}

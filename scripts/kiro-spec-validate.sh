@@ -13,7 +13,26 @@ FEATURE="$1"
 PHASE="${2:-all}"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
+# Prefer configured subroot for locating specs when present.
 SPEC_DIR="$ROOT_DIR/.kiro/specs/$FEATURE"
+CONFIG_JSON="$ROOT_DIR/.kiro/kiro-config.json"
+if [[ -f "$CONFIG_JSON" ]]; then
+  # Try to read subroot value safely
+  SUBROOT="$(python3 -c "import json,sys
+path='''$CONFIG_JSON'''
+try:
+    v=json.load(open(path)).get('subroot','')
+    print(v)
+except Exception:
+    print('')
+")"
+  if [[ -n "$SUBROOT" ]]; then
+    # If specs exist under the subroot, prefer that location
+    if [[ -d "$ROOT_DIR/$SUBROOT/.kiro/specs/$FEATURE" ]]; then
+      SPEC_DIR="$ROOT_DIR/$SUBROOT/.kiro/specs/$FEATURE"
+    fi
+  fi
+fi
 
 failures=()
 passes=()

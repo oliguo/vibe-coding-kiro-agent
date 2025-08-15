@@ -9,10 +9,13 @@ Install Kiro spec workflow assets (Copilot instructions, chatmode, prompts, temp
 into a target workspace.
 
 Usage:
-  kiro-spec-bootstrap.sh [--target <path>] [--feature <name>] [--install-extensions] [--force]
+  kiro-spec-bootstrap.sh [--target <path>] [--feature <name>] [--subroot <dir>] [--install-extensions] [--force]
 
 Options:
   --target <path>       Target workspace root (default: current directory)
+  --feature <name>      Optional: seed a starter spec under .kiro/specs/<name>
+  --subroot <dir>       Optional: create a named sub-root (e.g. 'app') and record it in .kiro/kiro-config.json so generated code is placed under it
+  --install-extensions  Use VS Code `code` CLI to install recommended extensions (optional)
   --force               Overwrite existing files
 HELP
 }
@@ -22,11 +25,13 @@ FEATURE=""
 INCLUDE_EXT=0
 FORCE=0
 INSTALL_EXT=0
+SUBROOT=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --target) TARGET="$2"; shift 2;;
   --feature) FEATURE="$2"; shift 2;;
+  --subroot) SUBROOT="$2"; shift 2;;
   --install-extensions) INSTALL_EXT=1; shift;;
     --force) FORCE=1; shift;;
     -h|--help) usage; exit 0;;
@@ -60,6 +65,19 @@ copy_tree() {
 }
 
 echo "Bootstrapping Kiro spec into: $TARGET"
+
+# If a subroot is requested, ensure it exists and record it in .kiro/kiro-config.json
+if [[ -n "$SUBROOT" ]]; then
+  echo "Creating subroot: $SUBROOT"
+  ensure_dir "$TARGET/$SUBROOT"
+  ensure_dir "$TARGET/.kiro"
+  cat > "$TARGET/.kiro/kiro-config.json" <<JSON
+{
+  "subroot": "$SUBROOT"
+}
+JSON
+  echo "Wrote: $TARGET/.kiro/kiro-config.json"
+fi
 
 # 1) .github content (instructions, chatmodes, prompts, templates, workflow doc)
 copy_tree "$SRC_GITHUB" "instructions" ".github/instructions"
@@ -122,7 +140,12 @@ fi
 
 # 6) Optional: seed a starter spec from templates
 if [[ -n "$FEATURE" ]]; then
-  SPEC_DIR="$TARGET/.kiro/specs/$FEATURE"
+  # Determine where to place seeded specs. If SUBROOT was provided, put specs under it so code and specs live together.
+  if [[ -n "$SUBROOT" ]]; then
+    SPEC_DIR="$TARGET/$SUBROOT/.kiro/specs/$FEATURE"
+  else
+    SPEC_DIR="$TARGET/.kiro/specs/$FEATURE"
+  fi
   ensure_dir "$SPEC_DIR"
   for f in requirements design tasks; do
     src_tmpl="$SRC_GITHUB/templates/kiro-$f-template.md"
@@ -155,5 +178,8 @@ fi
 echo "Done. Next steps:"
 echo "- Open $TARGET in VS Code. You'll be prompted to install recommended extensions (Copilot & Chat)."
 echo "- Tasks available: Run Task → Kiro: Validate Spec / Validate Latest Spec"
+if [[ -n "$SUBROOT" ]]; then
+  echo "- Project files should be generated under subroot: $SUBROOT. Keep that folder as your project root in VS Code if desired."
+fi
 echo "- Copilot Chat: 'Kiro-Spec-Agent' chat mode should be available automatically."
 echo "- Use the gated prompts to create requirements/design/tasks files (or edit the seeded ones)."

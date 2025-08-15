@@ -1,0 +1,20 @@
+name: Bootstrap test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  bootstrap-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run bootstrap test
+        run: |
+          set -euo pipefail
+          chmod +x scripts/test-bootstrap.sh
+          bash scripts/test-bootstrap.sh

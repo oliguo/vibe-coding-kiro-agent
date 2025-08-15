@@ -53,6 +53,21 @@
       }
     },
     {
+      "label": "Kiro: Validate Latest Spec (Auto)",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/kiro-spec-validate-latest-task.sh ${input:phase}",
+      "group": "test",
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
       "label": "Kiro: Validate Spec (All)",
       "type": "shell",
       "command": "${workspaceFolder}/scripts/kiro-spec-validate.sh ${input:featureName} all",

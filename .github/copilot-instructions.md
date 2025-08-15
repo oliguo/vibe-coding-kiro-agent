@@ -82,3 +82,10 @@ applyTo: "**"
 - After edits, run quick validation: syntax/lint check if available; for planning docs, run the spec validator and include PASS/FAIL.
 - Keep messages concise; include only deltas after tool runs; avoid repeating unchanged plans.
 - Ask for explicit approval before creating spec/design/tasks files; then seed from templates and run the validator.
+
+## Subroot handling
+- If a `.kiro/kiro-config.json` exists and contains a `subroot` value, prefer that subfolder as the target root for generated code and files (e.g., `app/`). Ask the user before writing outside that subroot.
+
+### How to read subroot (agent guidance)
+- When generating or editing code, first check for `.kiro/kiro-config.json` at the workspace root. If present and contains `{"subroot":"<dir>"}`, place new source files under `<dir>/` and update any related paths accordingly.
+- If the subroot does not exist, ask the user whether to create it.

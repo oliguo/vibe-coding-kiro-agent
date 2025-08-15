@@ -12,7 +12,7 @@ A minimal toolkit to spin up a new workspace and get a smart, spec-driven Copilo
 
 ```bash
 # From this repo root
-scripts/kiro-spec-bootstrap.sh --target "/path/to/your/new-workspace" --feature sample-feature --install-extensions --force
+scripts/kiro-spec-bootstrap.sh --target "/path/to/your/new-workspace" --feature sample-feature --subroot app --install-extensions --force
 ```
 
 3) Open the target workspace in VS Code.
@@ -41,8 +41,16 @@ scripts/kiro-spec-bootstrap.sh --target "/path/to/your/new-workspace" --feature 
 - We can’t force-select the chat mode programmatically; select "Kiro-Spec-Agent" manually the first time.
 - The bootstrap script enables Copilot instruction files and copies templates, prompts, and validators into your workspace.
 - When you pass `--feature <name>` to the bootstrap script it will also seed a starter spec under `.kiro/specs/<name>/` and create an `IMPLEMENTATION_PLAN.md` based on `.github/templates/implementation-plan-template.md`.
+- Using `--subroot <dir>` will create the directory under the workspace and record it in `.kiro/kiro-config.json`. Tools and agents should treat this subfolder as the project root for generated code (e.g., `app/`).
  - The `--install-extensions` flag uses the `code` CLI if available; otherwise VS Code will prompt you in the UI.
+
+Note: VS Code tasks (Kiro: Validate Spec / Validate Latest Spec) will look for specs under the configured subroot if `.kiro/kiro-config.json` contains `subroot`.
+
+New task: "Kiro: Validate Latest Spec (Auto)" runs a small helper that auto-detects the latest spec under the subroot and runs the validator without prompting for feature name.
 
 ## Troubleshooting
 - If files aren’t created, ensure you approved the VS Code prompt.
 - If the validator fails, open the reported file, fix missing sections, and re-run the task.
+
+## Continuous Integration
+This repo includes a GitHub Actions workflow that runs `scripts/test-bootstrap.sh` on push and pull requests to `main` to ensure the bootstrap flow (including subroot behavior) remains healthy.

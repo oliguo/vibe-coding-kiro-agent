@@ -9,7 +9,8 @@ Your goal is to run the Kiro spec workflow for ${input:featureIdea:Describe the 
   - .kiro/specs/{feature_name}/requirements.md
   - .kiro/specs/{feature_name}/design.md
   - .kiro/specs/{feature_name}/tasks.md
-- Use the instructions in #kiro-spec.instructions.md (applied automatically).
+ - Use the instructions in #kiro-spec.instructions.md (applied automatically).
+ - If a `.kiro/kiro-config.json` exists and contains a `subroot` value, prefer that subfolder as the location for generated program files (for example `app/`). Always ask for confirmation before writing files outside the configured subroot.
 - Require explicit user approval before advancing phases.
 - Before creating any file, ask: “Do you want to create the file for this phase?” Proceed only after the VS Code prompt is approved.
  - Requirements should include user stories, EARS acceptance criteria, edge cases, NFRs, out-of-scope, dependencies/risks.

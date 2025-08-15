@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
 PHASE="${1:-all}"
 
-# Prefer configured subroot for locating specs when present.
+# Determine specs directory, prefer subroot if configured
 CONFIG_JSON="$ROOT_DIR/.kiro/kiro-config.json"
 SPECS_DIR="$ROOT_DIR/.kiro/specs"
 if [[ -f "$CONFIG_JSON" ]]; then
@@ -25,9 +25,10 @@ if [[ ! -d "$SPECS_DIR" ]]; then
 fi
 
 FEATURE="$(ls -1t "$SPECS_DIR" | head -1 || true)"
-if [[ -z "${FEATURE:-}" ]]; then
+if [[ -z "$FEATURE" ]]; then
   echo "No spec features found in $SPECS_DIR" >&2
   exit 1
 fi
 
+echo "Validating latest spec: $FEATURE (phase: $PHASE) in $SPECS_DIR"
 "$ROOT_DIR/scripts/kiro-spec-validate.sh" "$FEATURE" "$PHASE"

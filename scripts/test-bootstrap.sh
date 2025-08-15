@@ -42,6 +42,16 @@ for f in requirements.md design.md tasks.md IMPLEMENTATION_PLAN.md; do
   fi
 done
 
+# Ensure VERSION was copied into the target root
+if [[ ! -f "$TMPDIR/VERSION" ]]; then
+  echo "FAILED: VERSION not copied into target root" >&2; exit 2
+fi
+if [[ -f "$ROOT_DIR/VERSION" ]]; then
+  if ! diff -q "$ROOT_DIR/VERSION" "$TMPDIR/VERSION" >/dev/null 2>&1; then
+    echo "FAILED: VERSION mismatch between repo and bootstrapped target" >&2; exit 2
+  fi
+fi
+
 # Run validator
 bash "$TMPDIR/scripts/kiro-spec-validate.sh" "$FEATURE" all || true
 

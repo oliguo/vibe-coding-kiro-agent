@@ -60,6 +60,17 @@ bash scripts/kiro-spec-bootstrap.sh --target /tmp/myproj --feature my-feature --
 - VS Code Tasks: open the Command Palette (Cmd+Shift+P or F1) → "Run Task" → "Kiro: Validate Spec" or "Kiro: Validate Latest Spec".
 - Copilot Chat: choose the "Kiro-Spec-Agent" chat mode in the mode picker.
 
+### Tool version
+
+After bootstrapping a workspace we include a small `VERSION` file in the target root so users can quickly see which release of the Kiro helper tooling they have installed.
+
+```bash
+# show the bootstrap tool version shipped with this repo
+cat /path/to/your/new-workspace/VERSION
+# or use the bundled helper
+/path/to/your/new-workspace/scripts/kiro-version.sh
+```
+
 ## How it works
 - Instruction files in `.github/**` guide Copilot:
   - `copilot-instructions.md` — repo-wide rules (TDD, 3-attempt rule, decision filter, DoD, playbook)

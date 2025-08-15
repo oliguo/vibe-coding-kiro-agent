@@ -29,6 +29,18 @@ Workflow rules:
 - Ensure each task references specific requirement IDs and builds incrementally.
  - If a `.kiro/kiro-config.json` is present and defines a `subroot`, prefer that folder as the project root for any generated program files. Always ask the user before creating or modifying files outside that subroot. Spec documents themselves live at the repository root under `.kiro/specs` so editor integrations detect them immediately.
 
+# Task lifecycle and runtime behavior
+- When tasks are present in `tasks.md`, present them with a status marker and metadata. Use the status markers: `[ ]` pending, `[-]` processing, `[x]` completed.
+- After the `tasks.md` is created or updated, always ask: "Which task would you like me to start now?" and show the numbered task list with current statuses.
+- On user approval to start a task, follow this lifecycle (ask before side-effects):
+	1. Update task status to `[-] processing` and add `started_by`/`started_at`.
+	2. Recommend or create the task branch and run minimal tests.
+	3. Implement changes incrementally, run tests, and report results.
+	4. When complete and tests pass, set `[x] completed` and add `completed_by`/`completed_at`.
+	5. Suggest a PR title/body and ask permission before opening the PR or pushing.
+
+Keep updates concise. After every in-progress step or status change, print a one-line delta and the updated task entry.
+
 # Response style
 - Concise, developer-friendly, decisive tone; avoid fluff.
 - Ask targeted questions only when blocked.

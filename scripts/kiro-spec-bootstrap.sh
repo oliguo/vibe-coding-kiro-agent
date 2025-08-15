@@ -259,13 +259,14 @@ fi
 ensure_dir "$TARGET/scripts"
 copy_smart "$SRC_SCRIPTS/kiro-spec-validate.sh" "$TARGET/scripts/kiro-spec-validate.sh"
 copy_smart "$SRC_SCRIPTS/kiro-spec-validate-latest.sh" "$TARGET/scripts/kiro-spec-validate-latest.sh"
+copy_smart "$SRC_SCRIPTS/kiro-task-update.sh" "$TARGET/scripts/kiro-task-update.sh" || true
 if [[ $DRY_RUN -eq 1 ]]; then
   log "[dry-run] would chmod +x $TARGET/scripts/kiro-spec-validate*.sh"
   log_json "chmod" "chmod" "" "$TARGET/scripts/kiro-spec-validate*.sh"
 else
-  chmod +x "$TARGET/scripts/kiro-spec-validate.sh" "$TARGET/scripts/kiro-spec-validate-latest.sh" || true
-  log "chmod +x $TARGET/scripts/kiro-spec-validate*.sh"
-  log_json "chmod" "chmod" "" "$TARGET/scripts/kiro-spec-validate*.sh"
+  chmod +x "$TARGET/scripts/kiro-spec-validate.sh" "$TARGET/scripts/kiro-spec-validate-latest.sh" "$TARGET/scripts/kiro-task-update.sh" || true
+  log "chmod +x $TARGET/scripts/kiro-spec-validate*.sh and kiro-task-update.sh"
+  log_json "chmod" "chmod" "" "$TARGET/scripts/kiro-spec-validate*.sh,$TARGET/scripts/kiro-task-update.sh"
 fi
 
 # 3) VS Code tasks

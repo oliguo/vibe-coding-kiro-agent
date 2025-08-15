@@ -12,10 +12,8 @@ Prompt:
 
 ## Spec workflow (gated)
 Prompt:
-- Feature idea: [short]
-- Phase: Requirements/Design/Tasks.
-- Propose output first. Then ask: “Do you want to create the file for this phase?”
-- After I approve, seed from templates and run scripts/kiro-spec-validate.sh {feature_name} <phase>. Include “Quality Gates: … PASS/FAIL”.
+
+ - After creating `tasks.md`, prompt the user: "Which task would you like me to start now?" and list tasks with status markers. On approval, update the chosen task to `[-] processing`, add `started_by`/`started_at`, run minimal tests, implement incrementally, then mark `[x] completed` with `completed_by`/`completed_at` when done. Request explicit approval before any git push/PR.
 
 Exact confirmations:
 - Requirements: “Do the requirements look good? If so, we will create the requirements.md file and move on to the design.”

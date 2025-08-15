@@ -64,3 +64,31 @@ if ! grep -q 'write-config' "$EMIT"; then
 fi
 
 echo "Dry-run JSON emitted and contains expected entries: $EMIT"
+
+# Smoke-test: ensure kiro-task-update.sh can start and complete a task
+if [[ -f "$ROOT_DIR/scripts/kiro-task-update.sh" ]]; then
+  echo "Running smoke-test for kiro-task-update.sh"
+  # copy helper into tmp workspace scripts if missing
+  if [[ ! -f "$TMPDIR/scripts/kiro-task-update.sh" ]]; then
+    cp "$ROOT_DIR/scripts/kiro-task-update.sh" "$TMPDIR/scripts/"
+    chmod +x "$TMPDIR/scripts/kiro-task-update.sh" || true
+  fi
+  # ensure we operate on the detected SPEC_DIR
+  if [[ -f "$SPEC_DIR/tasks.md" ]]; then
+    # start task 1
+    "$TMPDIR/scripts/kiro-task-update.sh" --feature "$FEATURE" --task 1 --start --by @smoke || { echo "FAILED: start action failed" >&2; exit 4; }
+    if ! grep -q "1. \[[-]\]" "$SPEC_DIR/tasks.md" && ! grep -q "started_by:" "$SPEC_DIR/tasks.md"; then
+      echo "FAILED: expected started marker/meta not found after start" >&2; exit 5
+    fi
+    # complete task 1
+    "$TMPDIR/scripts/kiro-task-update.sh" --feature "$FEATURE" --task 1 --complete --by @smoke || { echo "FAILED: complete action failed" >&2; exit 6; }
+    if ! grep -q "1. \[x\]" "$SPEC_DIR/tasks.md" && ! grep -q "completed_by:" "$SPEC_DIR/tasks.md"; then
+      echo "FAILED: expected completed marker/meta not found after complete" >&2; exit 7
+    fi
+    echo "Smoke-test for kiro-task-update.sh passed"
+  else
+    echo "SKIP: tasks.md not found at $SPEC_DIR for smoke-test"
+  fi
+else
+  echo "SKIP: kiro-task-update.sh not present in repo; skipping smoke-test"
+fi

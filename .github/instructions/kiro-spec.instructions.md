@@ -61,6 +61,18 @@ applyTo: "**"
 - Only execute one task at a time; stop for review after each.
 - If task has sub-tasks, start with them first.
 
+# Task execution lifecycle (agent guidance)
+- Tasks in `tasks.md` use status markers: `[ ]` pending, `[-]` processing, `[x]` completed.
+- After tasks are generated, the agent SHOULD ask: "Which task would you like me to start now?" and display the list with statuses.
+- On explicit user approval of a task, the agent SHOULD:
+  1. Update the chosen task to `[-] processing` and write `started_by` and `started_at` metadata (ISO8601 UTC).
+  2. Create or recommend the branch named in the task metadata and run the minimal tests described.
+  3. Implement the task incrementally, run tests, and report progress. If blocked, present the failure and request guidance.
+  4. After successful tests and completion, update the task to `[x] completed`, set `completed_by`/`completed_at`, and include a short commit note.
+  5. Propose a PR (title/body) and ask for permission before opening it or pushing changes.
+
+The agent MUST request explicit approval before performing side-effecting git operations (commits/pushes/PRs). If it cannot perform the git steps, provide exact commands for the user.
+
 ## Implementation flow and decision aids
 - TDD flow: Understand → Test (red) → Implement (green) → Refactor → Commit.
 - Max 3 tries rule: after three targeted attempts on a blocker, pause; write a brief failure note and consider alternatives.

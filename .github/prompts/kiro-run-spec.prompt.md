@@ -19,6 +19,9 @@ Your goal is to run the Kiro spec workflow for ${input:featureIdea:Describe the 
  - Seed new files from .github/templates and replace [feature_name]. After creation, run scripts/kiro-spec-validate.sh {feature_name} <phase> and report PASS/FAIL.
 - Keep outputs concise and developer-focused.
 
+- After creating `tasks.md`, ask: "Which task would you like me to start now?" Show the list with status markers `[ ]`/`[-]`/`[x]`.
+- When the user approves a task to start, update the status to `[-] processing`, add `started_by` and `started_at`, and follow the task's steps (run tests, implement, update status to `[x] completed` when done). Always ask for explicit permission before doing git operations (commit/push/PR).
+
 Output:
 - A brief confirmation with the inferred feature_name.
 - A summary of what was created/updated.

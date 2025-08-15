@@ -4,7 +4,8 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
 PHASE="${1:-all}"
 
-# Determine specs directory, prefer subroot if configured
+# Determine specs directory. By default look at repository root `.kiro/specs`.
+# If a configured subroot contains its own `.kiro/specs`, prefer that location.
 CONFIG_JSON="$ROOT_DIR/.kiro/kiro-config.json"
 SPECS_DIR="$ROOT_DIR/.kiro/specs"
 if [[ -f "$CONFIG_JSON" ]]; then

@@ -47,10 +47,10 @@ VS Code Task:
 - Latest Spec uses the most recently updated folder in .kiro/specs/.
 
 ## Common pitfalls
-- No VS Code approval: files won’t be created until you click Allow.
-- Wrong feature name: files are created under .kiro/specs/<feature_name>/; use the same name when running the validator.
-- Weak content: validator flags missing sections (e.g., no EARS criteria or user stories). Update the file and re-run.
-- Subroot: If you bootstrap a workspace with `--subroot <dir>`, a `.kiro/kiro-config.json` will be written containing the subroot name. Use that folder as your project root for generated code (for example `app/`).
+ - No VS Code approval: files won’t be created until you click Allow.
+ - Wrong feature name: files are created under the repository root at `.kiro/specs/<feature_name>/`; use the same name when running the validator.
+ - Weak content: validator flags missing sections (e.g., no EARS criteria or user stories). Update the file and re-run.
+ - Subroot: If you bootstrap a workspace with `--subroot <dir>`, a `.kiro/kiro-config.json` will be written containing the subroot name. Tools that generate program files should prefer that folder as the project root for generated code (for example `app/`). Spec documents themselves are stored at the repository root `.kiro/specs` so editor integrations detect them immediately.
 
 ## Success criteria (summary)
 - Requirements: intro/summary, numbered requirements, user stories, EARS acceptance criteria, NFRs, edge cases, out-of-scope, dependencies/risks.

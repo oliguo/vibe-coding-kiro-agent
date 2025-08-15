@@ -15,6 +15,46 @@ A minimal toolkit to spin up a new workspace and get a smart, spec-driven Copilo
 scripts/kiro-spec-bootstrap.sh --target "/path/to/your/new-workspace" --feature sample-feature --subroot app --install-extensions --force
 ```
 
+### Interactive & automation
+
+- Run interactively (prompts will ask for target, feature, subroot, install-extensions, force):
+
+```bash
+# From this repo root
+bash scripts/kiro-spec-bootstrap.sh
+```
+
+- Force interactive prompts even when passing flags:
+
+```bash
+bash scripts/kiro-spec-bootstrap.sh --interactive --target /tmp/myproj
+```
+
+- Skip final confirmation for CI / automated runs:
+
+```bash
+bash scripts/kiro-spec-bootstrap.sh --target /tmp/myproj --feature my-feature --subroot app --yes
+```
+
+### Logging & machine-readable output
+
+- Stream a JSON log of actions (newline-delimited JSON objects) while running:
+
+```bash
+# Emit streaming JSON to actions.json as the script runs
+bash scripts/kiro-spec-bootstrap.sh --target /tmp/myproj --feature my-feature --dry-run --emit-json actions.json
+```
+
+- Convenience `--log <file>` writes both a plain text log to `<file>` and a JSON file to `<file>.json`.
+
+```bash
+# Write both plain log and JSON
+bash scripts/kiro-spec-bootstrap.sh --target /tmp/myproj --feature my-feature --log /tmp/kiro-bootstrap-log
+```
+
+- JSON shape per action includes: type, detail, src, dest, timestamp, dry_run — useful for CI assertions and automation.
+
+
 3) Open the target workspace in VS Code.
 - Accept recommended extensions (GitHub Copilot + Copilot Chat) if prompted.
 - VS Code Tasks: open the Command Palette (Cmd+Shift+P or F1) → "Run Task" → "Kiro: Validate Spec" or "Kiro: Validate Latest Spec".
@@ -41,10 +81,11 @@ scripts/kiro-spec-bootstrap.sh --target "/path/to/your/new-workspace" --feature 
 - We can’t force-select the chat mode programmatically; select "Kiro-Spec-Agent" manually the first time.
 - The bootstrap script enables Copilot instruction files and copies templates, prompts, and validators into your workspace.
 - When you pass `--feature <name>` to the bootstrap script it will also seed a starter spec under `.kiro/specs/<name>/` and create an `IMPLEMENTATION_PLAN.md` based on `.github/templates/implementation-plan-template.md`.
-- Using `--subroot <dir>` will create the directory under the workspace and record it in `.kiro/kiro-config.json`. Tools and agents should treat this subfolder as the project root for generated code (e.g., `app/`).
+ - When you pass `--feature <name>` to the bootstrap script it will seed a starter spec under the repository root at `.kiro/specs/<name>/` and create an `IMPLEMENTATION_PLAN.md` based on `.github/templates/implementation-plan-template.md`.
+ - Using `--subroot <dir>` will create the directory under the workspace and record it in `.kiro/kiro-config.json`. Tools and agents should prefer that subfolder as the project root for generated program files (e.g., `app/`), but spec documents are stored at the repository root `.kiro/specs` so Kiro-aware IDEs detect them immediately.
  - The `--install-extensions` flag uses the `code` CLI if available; otherwise VS Code will prompt you in the UI.
 
-Note: VS Code tasks (Kiro: Validate Spec / Validate Latest Spec) will look for specs under the configured subroot if `.kiro/kiro-config.json` contains `subroot`.
+Note: VS Code tasks (Kiro: Validate Spec / Validate Latest Spec) will look for specs at the repository root `.kiro/specs`. If `.kiro/kiro-config.json` contains `subroot`, tools that generate program files should prefer that subroot for placing generated code; validators still locate spec docs under `.kiro/specs` by default.
 
 New task: "Kiro: Validate Latest Spec (Auto)" runs a small helper that auto-detects the latest spec under the subroot and runs the validator without prompting for feature name.
 

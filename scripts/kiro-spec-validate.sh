@@ -13,7 +13,9 @@ FEATURE="$1"
 PHASE="${2:-all}"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
-# Prefer configured subroot for locating specs when present.
+# By default specs live at repository root under `.kiro/specs/<feature>`. If a
+# configured `subroot` exists and contains its own `.kiro/specs/<feature>`,
+# prefer that location (this allows nested project layouts).
 SPEC_DIR="$ROOT_DIR/.kiro/specs/$FEATURE"
 CONFIG_JSON="$ROOT_DIR/.kiro/kiro-config.json"
 if [[ -f "$CONFIG_JSON" ]]; then

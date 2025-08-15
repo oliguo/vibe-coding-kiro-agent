@@ -8,7 +8,7 @@ Prompt:
 - Files likely involved: #file1, #file2
 - Please: 1) write a minimal failing test, 2) implement smallest code to pass, 3) refactor, 4) show a compact diff summary.
 - After edits, run quick validation and report: Build/Lint/Tests status (or N/A) and any errors.
- - If the workspace contains `.kiro/kiro-config.json` with a `subroot`, confirm that generated program files should go under that subroot (e.g., `app/`). Ask for explicit approval before writing outside it.
+ - If the workspace contains `.kiro/kiro-config.json` with a `subroot`, confirm that generated program files should go under that subroot (e.g., `app/`). Ask for explicit approval before writing outside it. Note: spec documents live at repository root `.kiro/specs` while generated program files should prefer the configured subroot.
 
 ## Spec workflow (gated)
 Prompt:

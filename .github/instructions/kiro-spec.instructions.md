@@ -9,7 +9,7 @@ applyTo: "**"
 
 # Requirements phase
 - Infer a short kebab-case {feature_name} from the user idea.
-- Before creating .kiro/specs/{feature_name}/requirements.md, prompt the user: “Do you want to create the requirements file now?” Only create the file after explicit user confirmation.
+- Before creating .kiro/specs/{feature_name}/requirements.md, prompt the user: “Do you want to create the requirements file now?” Only create the file after explicit user confirmation. Note: specs are stored at the repository root under `.kiro/specs`; the optional `subroot` recorded in `.kiro/kiro-config.json` is used by tools that generate program files.
 - When creating requirements.md, seed with .github/templates/kiro-requirements-template.md replacing [feature_name].
 - Include:
   - Introduction (feature summary)
@@ -24,7 +24,7 @@ applyTo: "**"
  - After creation, run scripts/kiro-spec-validate.sh {feature_name} requirements and report PASS/FAIL.
 
 # Design phase
-- Before creating .kiro/specs/{feature_name}/design.md, prompt the user: “Do you want to create the design file now?” Only create the file after explicit user confirmation.
+- Before creating .kiro/specs/{feature_name}/design.md, prompt the user: “Do you want to create the design file now?” Only create the file after explicit user confirmation. Note: specs are stored at the repository root under `.kiro/specs`.
 - When creating design.md, seed with .github/templates/kiro-design-template.md replacing [feature_name].
 - Perform targeted research with #fetch or #search; summarize key findings inline.
 - Sections:
@@ -42,7 +42,7 @@ applyTo: "**"
  - After creation, run scripts/kiro-spec-validate.sh {feature_name} design and report PASS/FAIL.
 
 # Tasks phase
-- Before creating .kiro/specs/{feature_name}/tasks.md, prompt the user: “Do you want to create the tasks file now?” Only create the file after explicit user confirmation.
+- Before creating .kiro/specs/{feature_name}/tasks.md, prompt the user: “Do you want to create the tasks file now?” Only create the file after explicit user confirmation. Note: specs are stored at the repository root under `.kiro/specs`.
 - When creating tasks.md, seed with .github/templates/kiro-tasks-template.md replacing [feature_name].
 - Convert design into a coding-only, TDD-oriented, incremental plan:
   - Simple numbered checklist; optional one extra level (1.1, 1.2).

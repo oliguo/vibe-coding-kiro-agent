@@ -8,6 +8,7 @@ SUBROOT="app"
 
 echo "Testing bootstrap into: $TMPDIR"
 
+# Run a full bootstrap (non-dry) first to ensure end-to-end
 bash "$ROOT_DIR/scripts/kiro-spec-bootstrap.sh" --target "$TMPDIR" --feature "$FEATURE" --subroot "$SUBROOT" --force
 
 # Check config
@@ -26,6 +27,7 @@ fi
 
 # Check seeded spec files path depending on subroot
 SPEC_DIR="$TMPDIR/.kiro/specs/$FEATURE"
+# Backwards-compat: if specs were created under the subroot, prefer that path
 if [[ -d "$TMPDIR/$SUBROOT/.kiro/specs/$FEATURE" ]]; then
   SPEC_DIR="$TMPDIR/$SUBROOT/.kiro/specs/$FEATURE"
 fi
@@ -48,3 +50,17 @@ echo "Bootstrap test completed successfully: $TMPDIR"
 
 # Keep the tmp dir printed so user can inspect manually
 echo "$TMPDIR"
+
+# Now test dry-run JSON output
+EMIT="$TMPDIR/actions.json"
+bash "$ROOT_DIR/scripts/kiro-spec-bootstrap.sh" --target "$TMPDIR" --feature "$FEATURE" --subroot "$SUBROOT" --dry-run --yes --emit-json "$EMIT"
+
+if [[ ! -f "$EMIT" ]]; then
+  echo "FAILED: expected JSON emit at $EMIT" >&2; exit 3
+fi
+
+if ! grep -q 'write-config' "$EMIT"; then
+  echo "FAILED: emitted JSON missing expected 'write-config' entry" >&2; exit 3
+fi
+
+echo "Dry-run JSON emitted and contains expected entries: $EMIT"

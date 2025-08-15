@@ -27,7 +27,7 @@ Workflow rules:
 - Incorporate user feedback and ask for re-approval after each revision.
 - Tasks must be only coding activities; exclude non-coding items.
 - Ensure each task references specific requirement IDs and builds incrementally.
- - If a `.kiro/kiro-config.json` is present and defines a `subroot`, prefer that folder as the project root for any generated code. Always ask the user before creating or modifying files outside that subroot.
+ - If a `.kiro/kiro-config.json` is present and defines a `subroot`, prefer that folder as the project root for any generated program files. Always ask the user before creating or modifying files outside that subroot. Spec documents themselves live at the repository root under `.kiro/specs` so editor integrations detect them immediately.
 
 # Response style
 - Concise, developer-friendly, decisive tone; avoid fluff.

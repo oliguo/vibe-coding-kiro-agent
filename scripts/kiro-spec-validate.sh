@@ -63,7 +63,8 @@ case "$PHASE" in
  esac
 
 if (( ${#failures[@]} == 0 )); then
-  echo "Quality Gates: content validation PASS — ${passes[*]}"; exit 0
+  # Use safe parameter expansion to avoid unbound variable errors under 'set -u'
+  echo "Quality Gates: content validation PASS — ${passes[*]:-}"; exit 0
 else
-  echo "Quality Gates: content validation FAIL — ${failures[*]} | ${passes[*]}"; exit 1
+  echo "Quality Gates: content validation FAIL — ${failures[*]:-} | ${passes[*]:-}"; exit 1
 fi

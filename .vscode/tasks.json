@@ -3,12 +3,6 @@
   "version": "2.0.0",
   "inputs": [
     {
-      "id": "featureName",
-      "type": "promptString",
-      "description": "Enter the kebab-case feature name (e.g., user-login)",
-      "default": "example-feature"
-    },
-    {
       "id": "phase",
       "type": "pickString",
       "description": "Select phase to validate",
@@ -37,6 +31,43 @@
         "clear": true
       }
     },
+    {
+      "label": "Kiro: Show Version",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/kiro-version.sh",
+      "group": "none",
+      "problemMatcher": [],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true }
+    },
+    {
+      "label": "Kiro: Self-Update (dry-run)",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/kiro-self-update.sh --dry-run",
+      "group": "none",
+      "problemMatcher": [],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true }
+    },
+    {
+      "label": "Kiro: Bump Version (patch, dry-run)",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/kiro-bump-version.sh --patch --dry-run",
+      "group": "none",
+      "problemMatcher": [],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true }
+    },
+    {
+      "label": "Kiro: Run Command (wrapper)",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/kiro-cmd.sh",
+      "args": [],
+      "group": "none",
+      "problemMatcher": [],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": false }
+  },
     {
       "label": "Kiro: Validate Latest Spec",
       "type": "shell",

@@ -1,0 +1,22 @@
+{
+  "Kiro: Run Command": {
+    "prefix": ["k", "/k"],
+    "body": ["bash ${workspaceFolder}/scripts/kiro-cmd.sh"],
+    "description": "Run Kiro command wrapper"
+  },
+  "Kiro: Show Version": {
+    "prefix": ["kver", "/kver", "version", "/version"],
+    "body": ["bash ${workspaceFolder}/scripts/kiro-version.sh"],
+    "description": "Show Kiro tooling version"
+  },
+  "Kiro: Self-Update (dry-run)": {
+    "prefix": ["ku", "/ku", "selfupdate", "/selfupdate"],
+    "body": ["bash ${workspaceFolder}/scripts/kiro-self-update.sh --dry-run"],
+    "description": "Preview self-update (dry-run)"
+  },
+  "Kiro: Bump Version (patch)": {
+    "prefix": ["kbump", "/kbump", "bump", "/bump"],
+    "body": ["bash ${workspaceFolder}/scripts/kiro-bump-version.sh --patch"],
+    "description": "Bump version (patch)"
+  }
+}

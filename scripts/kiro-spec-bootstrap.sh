@@ -185,6 +185,31 @@ SRC_GITHUB="$ROOT_DIR/.github"
 SRC_VSCODE="$ROOT_DIR/.vscode"
 SRC_SCRIPTS="$ROOT_DIR/scripts"
 
+# Announce local tool version and check remote
+if [[ -f "$ROOT_DIR/VERSION" ]]; then
+  LOCAL_VERSION=$(cat "$ROOT_DIR/VERSION" | tr -d ' \n\r')
+  log "Kiro tooling version: $LOCAL_VERSION"
+  REMOTE_VERSION_URL="https://raw.githubusercontent.com/oliguo/vibe-coding-kiro-agent/refs/heads/main/VERSION"
+  REMOTE_V=""
+  if command -v curl >/dev/null 2>&1; then
+    REMOTE_V=$(curl -fsSL "$REMOTE_VERSION_URL" 2>/dev/null || echo "")
+  elif command -v wget >/dev/null 2>&1; then
+    REMOTE_V=$(wget -qO- "$REMOTE_VERSION_URL" 2>/dev/null || echo "")
+  fi
+  REMOTE_V=$(echo "$REMOTE_V" | tr -d ' \n\r')
+  if [[ -n "$REMOTE_V" ]]; then
+    if [[ "$REMOTE_V" != "$LOCAL_VERSION" ]]; then
+      log "Remote version available: $REMOTE_V (local: $LOCAL_VERSION). Run scripts/kiro-self-update.sh to upgrade (asks before overwrite)."
+      log_json "version-check" "remote_newer" "$LOCAL_VERSION" "$REMOTE_V"
+    else
+      log "You have the latest version: $LOCAL_VERSION"
+      log_json "version-check" "up-to-date" "$LOCAL_VERSION" "$REMOTE_V"
+    fi
+  else
+    log "Could not fetch remote VERSION from $REMOTE_VERSION_URL"
+  fi
+fi
+
 ensure_dir() {
   if [[ $DRY_RUN -eq 1 ]]; then
     log "[dry-run] ensure_dir: $1"
@@ -262,13 +287,15 @@ copy_smart "$SRC_SCRIPTS/kiro-spec-validate-latest.sh" "$TARGET/scripts/kiro-spe
 copy_smart "$SRC_SCRIPTS/kiro-task-update.sh" "$TARGET/scripts/kiro-task-update.sh" || true
 copy_smart "$ROOT_DIR/VERSION" "$TARGET/VERSION" || true
 copy_smart "$SRC_SCRIPTS/kiro-version.sh" "$TARGET/scripts/kiro-version.sh" || true
+copy_smart "$SRC_SCRIPTS/kiro-bump-version.sh" "$TARGET/scripts/kiro-bump-version.sh" || true
+copy_smart "$SRC_SCRIPTS/kiro-self-update.sh" "$TARGET/scripts/kiro-self-update.sh" || true
 if [[ $DRY_RUN -eq 1 ]]; then
   log "[dry-run] would chmod +x $TARGET/scripts/kiro-spec-validate*.sh"
   log_json "chmod" "chmod" "" "$TARGET/scripts/kiro-spec-validate*.sh"
 else
-  chmod +x "$TARGET/scripts/kiro-spec-validate.sh" "$TARGET/scripts/kiro-spec-validate-latest.sh" "$TARGET/scripts/kiro-task-update.sh" "$TARGET/scripts/kiro-version.sh" || true
-  log "chmod +x $TARGET/scripts/kiro-spec-validate*.sh and kiro-task-update.sh and kiro-version.sh"
-  log_json "chmod" "chmod" "" "$TARGET/scripts/kiro-spec-validate*.sh,$TARGET/scripts/kiro-task-update.sh,$TARGET/scripts/kiro-version.sh"
+  chmod +x "$TARGET/scripts/kiro-spec-validate.sh" "$TARGET/scripts/kiro-spec-validate-latest.sh" "$TARGET/scripts/kiro-task-update.sh" "$TARGET/scripts/kiro-version.sh" "$TARGET/scripts/kiro-bump-version.sh" "$TARGET/scripts/kiro-self-update.sh" || true
+  log "chmod +x $TARGET/scripts/kiro-spec-validate*.sh and kiro-task-update.sh and kiro-version.sh and bump/self-update"
+  log_json "chmod" "chmod" "" "$TARGET/scripts/kiro-spec-validate*.sh,$TARGET/scripts/kiro-task-update.sh,$TARGET/scripts/kiro-version.sh,$TARGET/scripts/kiro-bump-version.sh,$TARGET/scripts/kiro-self-update.sh"
 fi
 
 # 3) VS Code tasks

@@ -71,6 +71,11 @@ cat /path/to/your/new-workspace/VERSION
 /path/to/your/new-workspace/scripts/kiro-version.sh
 ```
 
+Helpers:
+
+- `scripts/kiro-self-update.sh` — check remote VERSION and optionally pull latest changes (asks before overwriting).
+- `scripts/kiro-bump-version.sh` — locally bump or set the `VERSION` file when you publish updates to this tooling.
+
 ## How it works
 - Instruction files in `.github/**` guide Copilot:
   - `copilot-instructions.md` — repo-wide rules (TDD, 3-attempt rule, decision filter, DoD, playbook)

@@ -124,6 +124,22 @@ def main():
 
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     spec_dir = find_spec_dir(root, args.feature)
+    # Print local tool version and attempt to fetch remote VERSION for visibility
+    try:
+        local_version = open(os.path.join(root, '..', 'VERSION')).read().strip()
+    except Exception:
+        local_version = None
+    if local_version:
+        print(f"Kiro tooling version: {local_version}")
+        try:
+            import urllib.request
+            url = 'https://raw.githubusercontent.com/oliguo/vibe-coding-kiro-agent/refs/heads/main/VERSION'
+            with urllib.request.urlopen(url, timeout=3) as r:
+                remote_v = r.read().decode('utf-8').strip()
+            if remote_v and remote_v != local_version:
+                print(f"Remote version available: {remote_v} (local: {local_version}). Run scripts/kiro-self-update.sh to upgrade (asks before overwrite).")
+        except Exception:
+            pass
     tasks_path = os.path.join(spec_dir, 'tasks.md')
     if not os.path.isdir(spec_dir):
         print(f"Spec directory not found: {spec_dir}", file=sys.stderr)

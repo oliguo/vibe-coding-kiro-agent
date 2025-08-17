@@ -35,6 +35,8 @@ The full scripts reference has been moved to `docs/scripts.md` to keep this READ
 2. Open it in VS Code and run `Tasks: Run Task` → `Kiro: Show Version` to confirm helpers were installed.
 3. Use `Kiro: Run Command (wrapper)` or `Kiro: Self-Update (dry-run)` to explore tooling without risk.
 
+Note: when bootstrapping into an existing workspace that already contains files, use `--merge-strategy` to control behavior: `override` to replace, `merge` to append our text changes into existing text files, or `skip` to avoid modifying existing files. In interactive mode you'll be prompted per-conflict.
+
 If you want, I can also add example outputs (terminal transcripts) to `docs/scripts.md` for the most-used commands.
 
 ## Available VS Code Tasks

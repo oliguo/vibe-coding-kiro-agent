@@ -38,6 +38,7 @@ Each script is intentionally small and composable. Most support `--dry-run` or a
   - `--yes` (skip final confirmation for automated runs)
   - `--dry-run` (no changes, prints planned actions)
   - `--emit-json <file>` (emit NDJSON actions as the script runs)
+    - `--merge-strategy <mode>` (override|merge|skip) controls how existing files are handled; if omitted the script will prompt per-file in interactive mode.
 
 Example:
 

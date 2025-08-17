@@ -23,6 +23,7 @@ Options:
   --no-install          Do not attempt to install VS Code extensions even if --install-extensions is present
   --output-log <file>   Write an actions log (plain text) to <file>
   --emit-json <file>    Write machine-readable JSON describing planned actions to <file> (dry-run or real run)
+  --merge-strategy <mode>  How to handle existing files: override|merge|skip (default: prompt per-file)
   --log <file>          Convenience: write both plain log and JSON to <file> and <file>.json
 HELP
 }
@@ -40,6 +41,7 @@ NO_INSTALL=0
 OUTPUT_LOG=""
 EMIT_JSON=""
 LOG_FILE=""
+MERGE_STRATEGY=""
 
 # Remember original arg count to decide whether to run interactive prompts
 ORIGINAL_ARGC="$#"
@@ -168,6 +170,7 @@ while [[ $# -gt 0 ]]; do
   --no-install) NO_INSTALL=1; shift;;
   --output-log) OUTPUT_LOG="$2"; shift 2;;
   --emit-json) EMIT_JSON="$2"; shift 2;;
+  --merge-strategy) MERGE_STRATEGY="$2"; shift 2;;
   --log) LOG_FILE="$2"; shift 2;;
     --force) FORCE=1; shift;;
     -h|--help) usage; exit 0;;
@@ -222,7 +225,70 @@ ensure_dir() {
 copy_smart() {
   local src="$1" dest="$2"
   if [[ -e "$dest" && $FORCE -eq 0 ]]; then
-    log "Skip (exists): $dest"; return 0
+    # Decide merge behavior: MERGE_STRATEGY can be override|merge|skip or empty (prompt)
+    local action=""
+    if [[ -n "$MERGE_STRATEGY" ]]; then
+      action="$MERGE_STRATEGY"
+    else
+      if [[ $INTERACTIVE -eq 1 || $ORIGINAL_ARGC -eq 0 ]]; then
+        echo "Conflict: $dest already exists. Choose action: [o]verride, [m]erge-append (text files), [s]kip"
+        read -rp "Action (o/m/s) [s]: " a
+        a="${a:-s}"
+        case "$a" in
+          o|O) action=override;;
+          m|M) action=merge;;
+          s|S) action=skip;;
+          *) action=skip;;
+        esac
+      else
+        # non-interactive default: skip
+        action=skip
+      fi
+    fi
+
+    log_json "conflict" "detected" "$src" "$dest"
+    if [[ "$action" == "override" ]]; then
+      if [[ $DRY_RUN -eq 1 ]]; then
+        log "[dry-run] would override: $dest"
+        log_json "override" "override" "$src" "$dest"
+        return 0
+      else
+        ensure_dir "$(dirname "$dest")"
+        # backup existing dest
+        if [[ -e "$dest" ]]; then
+          bkup="$dest.bak.$(date +%Y%m%dT%H%M%S)"
+          cp -a "$dest" "$bkup" || true
+          log "Backed up before override: $dest -> $bkup"
+          log_json "backup" "backup-before-override" "$dest" "$bkup"
+        fi
+        cp -R "$src" "$dest"
+        log "Overrode: $dest"
+        log_json "override" "override" "$src" "$dest"
+        return 0
+      fi
+    elif [[ "$action" == "merge" ]]; then
+      # Delegate smart-merge to scripts/kiro-merge.py which creates backups and appends only unique lines for text files.
+      if [[ $DRY_RUN -eq 1 ]]; then
+        log "[dry-run] would smart-merge (kiro-merge.py): $src -> $dest"
+        log_json "merge" "smart-merge-dry" "$src" "$dest"
+        return 0
+      else
+        if command -v python3 >/dev/null 2>&1; then
+          ensure_dir "$(dirname "$dest")"
+          python3 "${ROOT_DIR}/scripts/kiro-merge.py" "$src" "$dest"
+          log_json "merge" "smart-merge" "$src" "$dest"
+          return 0
+        else
+          log "python3 not available; skipping merge for $dest"
+          log_json "skip" "no-python" "$src" "$dest"
+          return 0
+        fi
+      fi
+    else
+      log "Skip (exists): $dest"
+      log_json "skip" "exists" "$src" "$dest"
+      return 0
+    fi
   fi
   ensure_dir "$(dirname "$dest")"
   if [[ $DRY_RUN -eq 1 ]]; then
@@ -238,13 +304,46 @@ copy_smart() {
 copy_tree() {
   local src_dir="$1" rel="$2" dest_rel="$3"
   if [[ -d "$src_dir/$rel" ]]; then
+    # choose rsync behavior based on MERGE_STRATEGY
     if [[ $DRY_RUN -eq 1 ]]; then
-  log "[dry-run] would rsync: $src_dir/$rel/ -> $TARGET/$dest_rel/"
-  log_json "rsync" "rsync" "$src_dir/$rel/" "$TARGET/$dest_rel/"
+      log "[dry-run] would rsync: $src_dir/$rel/ -> $TARGET/$dest_rel/ (strategy: ${MERGE_STRATEGY:-prompt})"
+      log_json "rsync" "rsync-dry" "$src_dir/$rel/" "$TARGET/$dest_rel/"
     else
-  rsync -a $( [[ $FORCE -eq 1 ]] && echo "--delete" ) "$src_dir/$rel/" "$TARGET/$dest_rel/"
-  log "Synced: $dest_rel/"
-  log_json "rsync" "rsync" "$src_dir/$rel/" "$TARGET/$dest_rel/"
+      if [[ "$MERGE_STRATEGY" == "override" || $FORCE -eq 1 ]]; then
+        rsync -a --delete "$src_dir/$rel/" "$TARGET/$dest_rel/"
+        log "Synced (override): $dest_rel/"
+        log_json "rsync" "rsync-override" "$src_dir/$rel/" "$TARGET/$dest_rel/"
+      elif [[ "$MERGE_STRATEGY" == "skip" || -z "$MERGE_STRATEGY" ]]; then
+        # default safe behavior: copy files but don't delete or overwrite existing
+        rsync -a --ignore-existing "$src_dir/$rel/" "$TARGET/$dest_rel/"
+        log "Synced (skip existing): $dest_rel/"
+        log_json "rsync" "rsync-skip" "$src_dir/$rel/" "$TARGET/$dest_rel/"
+      elif [[ "$MERGE_STRATEGY" == "merge" ]]; then
+        # copy new files first
+        rsync -a --ignore-existing "$src_dir/$rel/" "$TARGET/$dest_rel/"
+        log "Synced (merge: new files copied): $dest_rel/"
+        log_json "rsync" "rsync-merge-new" "$src_dir/$rel/" "$TARGET/$dest_rel/"
+        # for files present in both, attempt append for text files
+        find "$src_dir/$rel" -type f | while read -r sfile; do
+          relpath="${sfile#$src_dir/}"
+          destfile="$TARGET/$dest_rel/$relpath"
+          if [[ -f "$destfile" ]]; then
+            # both exist -> delegate to kiro-merge.py for smarter behavior
+            if command -v python3 >/dev/null 2>&1; then
+              python3 "${ROOT_DIR}/scripts/kiro-merge.py" "$sfile" "$destfile"
+              log_json "merge" "smart-merge-file" "$sfile" "$destfile"
+            else
+              log "python3 not available; skipping smart merge for $destfile"
+              log_json "skip" "no-python" "$sfile" "$destfile"
+            fi
+          fi
+        done
+      else
+        # unknown strategy: fallback to safe ignore-existing
+        rsync -a --ignore-existing "$src_dir/$rel/" "$TARGET/$dest_rel/"
+        log "Synced (fallback skip-existing): $dest_rel/"
+        log_json "rsync" "rsync-fallback" "$src_dir/$rel/" "$TARGET/$dest_rel/"
+      fi
     fi
   fi
 }

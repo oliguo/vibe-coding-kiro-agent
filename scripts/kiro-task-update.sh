@@ -15,11 +15,13 @@ import json
 import os
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import datetime
 
 
 def iso_now():
-    return datetime.now(timezone.utc).isoformat()
+    # Use local device timezone so timestamps match the user's VS Code/device settings.
+    # datetime.now().astimezone() returns an aware datetime with local tzinfo and offset.
+    return datetime.now().astimezone().isoformat()
 
 
 def find_spec_dir(root, feature):

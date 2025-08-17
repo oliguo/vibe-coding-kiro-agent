@@ -41,18 +41,18 @@
       "presentation": { "reveal": "always", "panel": "dedicated", "clear": true }
     },
     {
-      "label": "Kiro: Self-Update (dry-run)",
+      "label": "Kiro: Self-Update",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/kiro-self-update.sh --dry-run",
+      "command": "${workspaceFolder}/scripts/kiro-self-update.sh",
       "group": "none",
       "problemMatcher": [],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "dedicated", "clear": true }
     },
     {
-      "label": "Kiro: Bump Version (patch, dry-run)",
+      "label": "Kiro: Bump Version (patch)",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/kiro-bump-version.sh --patch --dry-run",
+      "command": "${workspaceFolder}/scripts/kiro-bump-version.sh --patch",
       "group": "none",
       "problemMatcher": [],
       "options": { "cwd": "${workspaceFolder}" },

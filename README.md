@@ -39,7 +39,7 @@ If you want, I can also add example outputs (terminal transcripts) to `docs/scri
 
 ## Available VS Code Tasks
 
-These tasks are configured in `.vscode/tasks.json` and are available via Command Palette → Tasks: Run Task.
+These tasks are configured in `.vscode/tasks.json` and are available via Command Palette → Tasks: Run Task. They are intended for local development and quick checks (not a CI integration).
 
 - Kiro: Validate Spec
   - Command: `${workspaceFolder}/scripts/kiro-spec-validate.sh ${input:featureName} ${input:phase}`
@@ -55,7 +55,7 @@ These tasks are configured in `.vscode/tasks.json` and are available via Command
 
 - Kiro: Validate Latest Spec (Auto)
   - Command: `${workspaceFolder}/scripts/kiro-spec-validate-latest-task.sh ${input:phase}`
-  - Use: Automation-friendly version of validate-latest (non-interactive helper).
+  - Use: Non-interactive validate-latest helper suitable for automation outside GitHub Actions.
 
 - Kiro: Show Version
   - Command: `${workspaceFolder}/scripts/kiro-version.sh`

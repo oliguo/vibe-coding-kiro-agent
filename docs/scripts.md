@@ -1,6 +1,6 @@
 # Scripts reference — full details
 
-This document expands the short README summary and documents every helper script shipped with this repo. It includes purpose, typical arguments, examples, and notes about safety and CI usage.
+This document expands the short README summary and documents every helper script shipped with this repo. It includes purpose, typical arguments, examples, and notes about safety and local/automation usage.
 
 ## Table of contents
 
@@ -45,12 +45,12 @@ Example:
 # interactive mode
 bash scripts/kiro-spec-bootstrap.sh
 
-# non-interactive (CI-friendly)
+# non-interactive (automation-friendly)
 bash scripts/kiro-spec-bootstrap.sh --target /tmp/myproj --feature sample-feature --subroot app --yes --dry-run
 ```
 
 Notes:
-- `--emit-json` produces newline-delimited JSON useful for CI assertions.
+- `--emit-json` produces newline-delimited JSON useful for automation assertions.
 - The script writes `VERSION` and helper scripts into the target so users can check tooling versions easily.
 
 ---
@@ -138,8 +138,8 @@ bash scripts/kiro-self-update.sh --dry-run
 
 ## scripts/test-bootstrap.sh
 
-- Purpose: smoke-test the bootstrap flow. Used by CI to ensure the bootstrap flow remains functional.
-- Behavior: creates a temporary workspace, runs the bootstrap in dry-run mode, asserts that expected files are present, and exercises `kiro-task-update.sh`.
+-- Purpose: smoke-test the bootstrap flow. Intended for local use or external automation to ensure the bootstrap flow remains functional.
+-- Behavior: creates a temporary workspace, runs the bootstrap in dry-run mode, asserts that expected files are present, and exercises `kiro-task-update.sh`.
 
 ---
 

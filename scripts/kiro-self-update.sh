@@ -52,16 +52,19 @@ if confirm "Pull latest changes from remote and overwrite local files?"; then
     if confirm "Overwrite local files with remote tarball (destructive)?"; then
       TMPDIR=$(mktemp -d)
       trap 'rm -rf "$TMPDIR"' EXIT
-      echo "Downloading archive..."
-      curl -fsSL "https://github.com/oliguo/vibe-coding-kiro-agent/archive/refs/heads/main.tar.gz" -o "$TMPDIR/main.tar.gz"
+  echo "Downloading archive..."
+  curl -fsSL "https://github.com/oliguo/vibe-coding-kiro-agent/archive/refs/heads/main.tar.gz" -o "$TMPDIR/main.tar.gz"
       mkdir -p "$TMPDIR/extract"
       tar -xzf "$TMPDIR/main.tar.gz" -C "$TMPDIR/extract"
       rootdir=$(find "$TMPDIR/extract" -maxdepth 1 -type d -name "vibe-coding-kiro-agent-*" | head -n1)
       if [[ -z "$rootdir" ]]; then
         echo "Failed to locate extracted archive"; exit 4
       fi
-      rsync -a --delete "$rootdir/" "$ROOT_DIR/"
-      echo "Overwritten local files with remote archive. Updated to $REMOTE_V"
+  # Preserve any local .kiro spec/config folder: do not overwrite user specs or config
+  echo "Preserving local .kiro directory if present; it will NOT be overwritten by the remote archive."
+  # Use rsync exclude to protect .kiro; exclude both the directory and its contents
+  rsync -a --delete --exclude='.kiro/' --exclude='.kiro/**' "$rootdir/" "$ROOT_DIR/"
+  echo "Overwritten local files with remote archive (local .kiro preserved). Updated to $REMOTE_V"
     else
       echo "Aborted by user. No changes made."
       exit 0

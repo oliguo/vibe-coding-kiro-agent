@@ -224,6 +224,13 @@ ensure_dir() {
 
 copy_smart() {
   local src="$1" dest="$2"
+  # Protect target .kiro directory: never overwrite or override files under the user's .kiro
+  # This ensures user-created specs and config are preserved even during force/override flows.
+  if [[ "$dest" == "$TARGET/.kiro"* || "$dest" == "$TARGET/.kiro" ]]; then
+    log "Protected: skipping overwrite of user .kiro content: $dest"
+    log_json "skip" "protected-kiro" "$src" "$dest"
+    return 0
+  fi
   if [[ -e "$dest" && $FORCE -eq 0 ]]; then
     # Decide merge behavior: MERGE_STRATEGY can be override|merge|skip or empty (prompt)
     local action=""

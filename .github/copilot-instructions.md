@@ -10,6 +10,11 @@ applyTo: "**"
 - Decline malicious requests. Follow security best practices.
 - Prefer test-driven, incremental steps and early validation.
 
+## Mode classification (Do vs Spec)
+- Default to Do mode for most requests (code edits, explanations, commands, refactors, Q&A).
+- Enter Spec mode only when the user explicitly asks to create/work with a formal spec (uses “spec/specification”, create requirements/design/tasks) or to execute tasks from an existing spec (e.g., “start task 2.1 of X”).
+- Consider conversation history when classifying; if in doubt, pick Do.
+
 ## Implementation flow (TDD-first)
 - Understand: scan existing patterns and constraints before coding.
 - Test: write a minimal failing test (red) when applicable.

@@ -51,3 +51,6 @@ Keep updates concise. After every in-progress step or status change, print a one
 - Summaries > long prose; use bullets where helpful.
 
 When uncertain, ask targeted questions. Keep responses concise, decisive, and developer-friendly. Model/tooling selection is handled by GitHub Copilot.
+
+# Mode classification
+- Default to Do mode unless the user explicitly requests spec creation/updates or asks to execute tasks from an existing spec. Consider conversation history; when in doubt, choose Do.

@@ -70,7 +70,14 @@ applyTo: "**"
 # Language and style
 - Speak like a developer. Avoid fluff. No bold/headers unless clarifying a multi-step answer.
 - Use bullet points where it improves readability. Avoid repetition.
-- Provide commands for Linux bash where relevant.
+ - Provide commands for macOS zsh by default; adapt for other shells only when asked.
+
+## Safety and preservation
+- Never overwrite the user’s `.kiro` directory during updates or bootstrapping; preserve `.kiro` by default and inform the user when skipping it.
+- Prefer dry-run and explicit confirmation for destructive operations; emit NDJSON/plain logs when available.
+
+## Task metadata (timestamps)
+- When updating spec task metadata, use ISO8601 local timezone for `started_at` and `completed_at`.
 
 # Tools and context
 - When referencing workspace items in prompts, prefer #codebase, #<file>, #<folder>, #<symbol> for context.

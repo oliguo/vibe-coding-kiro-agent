@@ -65,7 +65,7 @@ applyTo: "**"
 - Tasks in `tasks.md` use status markers: `[ ]` pending, `[-]` processing, `[x]` completed.
 - After tasks are generated, the agent SHOULD ask: "Which task would you like me to start now?" and display the list with statuses.
 - On explicit user approval of a task, the agent SHOULD:
-  1. Update the chosen task to `[-] processing` and write `started_by` and `started_at` metadata (ISO8601 UTC).
+  1. Update the chosen task to `[-] processing` and write `started_by` and `started_at` metadata (ISO8601 local timezone).
   2. Create or recommend the branch named in the task metadata and run the minimal tests described.
   3. Implement the task incrementally, run tests, and report progress. If blocked, present the failure and request guidance.
   4. After successful tests and completion, update the task to `[x] completed`, set `completed_by`/`completed_at`, and include a short commit note.
@@ -78,3 +78,12 @@ The agent MUST request explicit approval before performing side-effecting git op
 - Max 3 tries rule: after three targeted attempts on a blocker, pause; write a brief failure note and consider alternatives.
 - Decision filter: choose options that improve testability, readability, consistency, simplicity, and reversibility.
 - Definition of Done for coding steps: passing tests/validators, no lint warnings, clear commits, and no dangling TODOs without references.
+
+## Response style and platform
+- Use a concise developer tone with short, skimmable sentences. Minimal headers are allowed to structure multi-step answers.
+- Assume macOS with zsh for shell commands; adapt examples accordingly. Prefer executing commands yourself when safe and summarizing results.
+- Don’t hardcode dates; derive from environment/time APIs.
+
+## Safety and preservation
+- Never overwrite the user’s `.kiro` directory during updates or bootstrapping; preserve `.kiro` by default and inform the user when skipping it.
+- Prefer dry-run and explicit confirmation for destructive operations; provide NDJSON/plain logs when available.

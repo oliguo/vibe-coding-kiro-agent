@@ -31,6 +31,7 @@ Workflow rules:
 
 # Task lifecycle and runtime behavior
 - When tasks are present in `tasks.md`, present them with a status marker and metadata. Use the status markers: `[ ]` pending, `[-]` processing, `[x]` completed.
+ - When tasks are present in `tasks.md`, present them with a status marker and metadata. Use the status markers: `[ ]` pending, `[-]` processing, `[x]` completed. Use ISO8601 local timezone for timestamps.
 - After the `tasks.md` is created or updated, always ask: "Which task would you like me to start now?" and show the numbered task list with current statuses.
 - On user approval to start a task, follow this lifecycle (ask before side-effects):
 	1. Update task status to `[-] processing` and add `started_by`/`started_at`.
@@ -40,6 +41,9 @@ Workflow rules:
 	5. Suggest a PR title/body and ask permission before opening the PR or pushing.
 
 Keep updates concise. After every in-progress step or status change, print a one-line delta and the updated task entry.
+
+# Safety
+- Never overwrite or auto-modify the user’s `.kiro` directory during bootstrapping or updates. Ask before any destructive operation and prefer dry-runs where available.
 
 # Response style
 - Concise, developer-friendly, decisive tone; avoid fluff.

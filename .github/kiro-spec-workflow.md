@@ -2,7 +2,7 @@
 
 A quick guide for running the spec-driven flow with Kiro-Spec-Agent, using gated file creation, templates, and the validator.
 
-See also: `COPILOT.md` for a concise Copilot Chat guide and playbook, and `.github/prompts/copilot-recipes.md` for ready-to-use prompts.
+See also: `COPILOT.md` for a concise Copilot Chat guide and playbook. For the gated spec flow prompt, use `.github/prompts/kiro-run-spec.prompt.md`.
 
 In VS Code Copilot Chat, select the "Kiro-Spec-Agent" chat mode from the mode picker (if it’s not already selected).
 

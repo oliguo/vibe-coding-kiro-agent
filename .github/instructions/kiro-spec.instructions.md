@@ -5,7 +5,7 @@ applyTo: "**"
 
 # Using with GitHub Copilot Chat
 - In VS Code, select the "Kiro-Spec-Agent" chat mode in Copilot Chat.
-- See `COPILOT.md` for a short Copilot playbook and `.github/prompts/copilot-recipes.md` for reusable prompts.
+- See `COPILOT.md` for a short Copilot playbook. For the gated spec workflow, prefer `.github/prompts/kiro-run-spec.prompt.md`.
 
 # Requirements phase
 - Infer a short kebab-case {feature_name} from the user idea.
